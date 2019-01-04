@@ -1,25 +1,51 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Toolbar from './components/toolbar.js';
+import MessageList from './components/messages-list.js';
 
 class App extends Component {
+
+  constructor() {
+    super()
+    this.state = {
+      messages: []
+    }
+  }
+
+  getData = async () => {
+    let result = await fetch("http://localhost:8082/api/messages")
+    .then(response => response.json())
+    .then(res => {
+      this.setState({
+        messages: res
+      })
+    })
+    .catch(error => console.error(error))
+    return result
+  }
+
+  componentDidMount() {
+    this.getData()
+  }
+
+  messageRead = (id) => {
+    const updatedMessage = this.state.messages.map(message => {
+      if(message.id === id) {
+        message.read = !message.read
+      }
+      return message
+    })
+
+    this.setState({
+      messages: updatedMessage
+    })
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="container">
+        <Toolbar />
+        <MessageList state={ this.state.messages } messageRead={ this.messageRead } />
       </div>
     );
   }
