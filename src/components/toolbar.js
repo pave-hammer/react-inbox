@@ -1,7 +1,28 @@
 import React, { Component } from 'react';
 
 class Toolbar extends Component {
+
+  thisIsBullshit = () => {
+    let disabled = false
+    // console.log(this.props.state.map(item => item.id))
+    const isDisabled = this.props.state.map(item => {
+      if(item.selected){
+        console.log("true")
+        return true
+      } else {
+        console.log("false")
+        return false
+      }
+    })
+    const result = isDisabled.includes(true) ? false : true
+    // const result = this.props.state.selected ? console.log("true") : console.log("false")
+    return (
+      <button className="btn btn-default" disabled={(result)}>Mark As Read</button>
+    )
+  }
+
   render() {
+
     return (
         <div className="row toolbar">
             <div className="col-md-12">
@@ -14,9 +35,7 @@ class Toolbar extends Component {
                   <i className="fa fa-square-o"></i>
                 </button>
 
-                <button className="btn btn-default" disabled="disabled">
-                  Mark As Read
-                </button>
+                {this.thisIsBullshit()}
 
                 <button className="btn btn-default" disabled="disabled">
                   Mark As Unread

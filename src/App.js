@@ -12,26 +12,57 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    this.getData()
+  }
+
   getData = async () => {
-    let result = await fetch("http://localhost:8082/api/messages")
+    return await fetch("http://localhost:8082/api/messages")
     .then(response => response.json())
     .then(res => {
+      res.map(messages => {
+        messages.read = false
+        messages.starred = false
+        messages.selected = false
+        return messages
+      })
       this.setState({
         messages: res
       })
     })
     .catch(error => console.error(error))
-    return result
-  }
-
-  componentDidMount() {
-    this.getData()
   }
 
   messageRead = (id) => {
+    const updatedMessage = this.state.messages.map(message => { 
+      if(message.id === id) {
+        message.read = true
+      }
+      return message
+    })
+
+    this.setState({
+      messages: updatedMessage
+    })
+  }
+
+  selectedMessage = (id) => {
     const updatedMessage = this.state.messages.map(message => {
       if(message.id === id) {
-        message.read = !message.read
+        message.selected = !message.selected
+      }
+      return message
+    })
+
+    this.setState({
+      messages: updatedMessage
+    })
+  }
+
+  starredMessage = (id) => {
+    const updatedMessage = this.state.messages.map(message => {
+      if(message.id === id) {
+        message.starred = !message.starred
       }
       return message
     })
@@ -44,8 +75,13 @@ class App extends Component {
   render() {
     return (
       <div className="container">
-        <Toolbar />
-        <MessageList state={ this.state.messages } messageRead={ this.messageRead } />
+        <Toolbar 
+          state={ this.state.messages }/>
+        <MessageList 
+          state={ this.state.messages } 
+          messageRead={ this.messageRead }
+          selectedMessage={ this.selectedMessage }
+          starredMessage={ this.starredMessage }/>
       </div>
     );
   }
