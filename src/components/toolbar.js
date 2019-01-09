@@ -19,20 +19,20 @@ class Toolbar extends Component {
   }
 
   selectedAll = () => {
-    let test = "fa fa-square-o"
+    let icon = "fa fa-square-o"
     const select = this.props.state.filter(message => message.selected === true)
     const updatedMessage = this.props.state.map(message => {
       if(select.length !== 0 && select.length !== this.props.state.length) {
-        test = "fa fa-minus-square-o"
+        icon = "fa fa-minus-square-o"
       } else if(select.length !== 0 && select.length === this.props.state.length) {
-        test = "fa fa-check-square-o"
+        icon = "fa fa-check-square-o"
       } else {
-        return test
+        return icon
       }
       return message
     })
     return (
-      <button className="btn btn-default" onClick={() => this.props.selectAll()}><i className={test}></i></button>
+      <button className="btn btn-default" onClick={() => this.props.selectAll()}><i className={icon}></i></button>
     )
   }
 
@@ -49,12 +49,26 @@ class Toolbar extends Component {
 
   removeLabel = () => {
     return (
-      <select className="form-control label-select" >
+      <select className="form-control label-select" onClick={(event) => this.props.removeLabel(event)}>
         <option>Remove label</option>
         <option value="dev">dev</option>
         <option value="personal">personal</option>
         <option value="gschool">gschool</option>
       </select>
+    )
+  }
+
+  delete = () => {
+    return (
+      <a href="/#" value="false" className="btn btn-default" onClick={() => this.props.deleteMessage()}>
+        <i className="fa fa-trash-o"></i>
+      </a>
+    )
+  }
+
+  compose = () => {
+    return (
+      <button className="btn btn-danger" onClick={() => this.props.showCompose()}><i className="fa fa-plus"></i></button>
     )
   }
 
@@ -68,6 +82,8 @@ class Toolbar extends Component {
                   unread messages
                 </p>
 
+                {this.compose()}
+
                 {this.selectedAll()}
 
                 {this.markAsReadToggle()}
@@ -78,9 +94,7 @@ class Toolbar extends Component {
 
                 {this.removeLabel()}
 
-                <button className="btn btn-default" disabled="disabled">
-                  <i className="fa fa-trash-o"></i>
-                </button>
+                {this.delete()}
             </div>
         </div>
       </div>

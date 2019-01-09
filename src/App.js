@@ -2,14 +2,22 @@ import React, { Component } from 'react';
 import './App.css';
 import Toolbar from './components/toolbar.js';
 import MessageList from './components/messages-list.js';
+import ComposeForm from './components/compose.js';
 
 class App extends Component {
 
   constructor() {
     super()
     this.state = {
-      messages: []
+      messages: [],
+      active: false
     }
+  }
+
+  stateUpdate = (message) => {
+    this.setState({
+      messages: message
+    })
   }
 
   componentDidMount() {
@@ -24,6 +32,7 @@ class App extends Component {
         messages.read = false
         messages.starred = false
         messages.selected = false
+        messages.opened = false
         return messages
       })
       this.setState({
@@ -37,13 +46,12 @@ class App extends Component {
     const updatedMessage = this.state.messages.map(message => { 
       if(message.id === id) {
         message.read = true
+        message.opened = !message.opened
       }
       return message
     })
 
-    this.setState({
-      messages: updatedMessage
-    })
+    this.stateUpdate(updatedMessage)
   }
 
   selectedMessage = (id) => {
@@ -54,9 +62,7 @@ class App extends Component {
       return message
     })
 
-    this.setState({
-      messages: updatedMessage
-    })
+    this.stateUpdate(updatedMessage)
   }
 
   starredMessage = (id) => {
@@ -67,13 +73,10 @@ class App extends Component {
       return message
     })
 
-    this.setState({
-      messages: updatedMessage
-    })
+    this.stateUpdate(updatedMessage)
   }
 
   markAsUnread = () => {
-    // console.log("id", id)
     const updatedMessage = this.state.messages.map(message => { 
       if(message.selected && message.read) {
         message.read = false
@@ -81,9 +84,7 @@ class App extends Component {
       return message
     })
 
-    this.setState({
-      messages: updatedMessage
-    })
+    this.stateUpdate(updatedMessage)
   }
 
   markAsRead = () => {
@@ -94,9 +95,7 @@ class App extends Component {
       return message
     })
 
-    this.setState({
-      messages: updatedMessage
-    })
+    this.stateUpdate(updatedMessage)
   }
 
   selectAll = () => {
@@ -106,20 +105,51 @@ class App extends Component {
       return message
     })
 
-    this.setState({
-      messages: updatedMessage
-    })
+    this.stateUpdate(updatedMessage)
   }
 
   addLabel = (event) => {
-    const select = this.state.messages.filter(message => message.selected === true)
     const updatedMessage = this.state.messages.map(message => {
-      select.length !== 0 ? console.log("true") : console.log("false")
+      const label = message.labels.includes(event.target.value)
+      if(message.selected === true && !label){
+        message.labels = [...message.labels, event.target.value]
+      }
+      return message
     })
+    
+    this.stateUpdate(updatedMessage)
   }
 
-  removeLabel = () => {
-    console.log("removeLabel works")
+  removeLabel = (event) => {
+    const updatedMessage = this.state.messages.map(message => {
+      const label = message.labels.includes(event.target.value)
+      if(message.selected === true && label){
+        const index = message.labels.indexOf(event.target.value)
+        message.labels.splice(index, 1)
+      }
+      return message
+    })
+
+    this.stateUpdate(updatedMessage)
+  }
+
+  deleteMessage = () => {
+    const updatedMessage = this.state.messages.filter(message => {
+      if(message.selected === true){
+        delete(message.selected)
+      } else if (message.selected !== true) {
+        return message
+      }
+    })
+
+    this.stateUpdate(updatedMessage)
+    return updatedMessage
+  }
+
+  showCompose = () => {
+    this.setState({
+      active: !this.state.active
+    })
   }
 
   render() {
@@ -131,7 +161,10 @@ class App extends Component {
           markAsRead={ this.markAsRead }
           selectAll={ this.selectAll }
           addLabel={ this.addLabel }
-          removeLabel={ this.removeLabel }/>
+          removeLabel={ this.removeLabel }
+          deleteMessage={ this.deleteMessage }
+          showCompose={ this.showCompose }/>
+        {this.state.active === true ? <ComposeForm /> : null}
         <MessageList 
           state={ this.state.messages } 
           messageRead={ this.messageRead }

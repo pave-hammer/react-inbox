@@ -14,7 +14,8 @@ class MessageList extends Component {
                     sub={ subject }
                     messageRead={ this.props.messageRead }
                     selectedMessage={ this.props.selectedMessage }
-                    starredMessage={ this.props.starredMessage }/>
+                    starredMessage={ this.props.starredMessage }
+                    onClick={() => this.props.showBody()}/>
                 })}
             </div>
         )
