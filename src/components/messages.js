@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Message extends Component {
     
     render(){
-        // console.log("child props -", this.props)
+        console.log("child props -", this.props.sub.labels)
         const subject = this.props.sub.subject
 
         const classInfo = () => {
@@ -13,12 +13,18 @@ class Message extends Component {
             return selected
         }
 
+        const labels = () => {
+            return (
+                <span className="label label-warning">butts</span>
+            )
+        }
+
         return (
-            <div className="container">
+            <div>
                 <div className="col-xs-1">
                   <div className="row">
                     <div className="col-xs-2">
-                      <input type="checkbox" onClick={ () => this.props.selectedMessage(this.props.sub.id) }/>
+                      <input type="checkbox" checked={this.props.sub.selected} onChange={ () => this.props.selectedMessage(this.props.sub.id) }/>
                     </div>
                     <div className="col-xs-2">
                       <i className={ this.props.sub.starred ? `star fa fa-star` : `star fa fa-star-o` } onClick={ () => this.props.starredMessage(this.props.sub.id) }></i>
@@ -27,6 +33,7 @@ class Message extends Component {
                 </div>
                 <div className={ classInfo() } onClick={ () => this.props.messageRead(this.props.sub.id) }>
                   <div className="col-xs-11">
+                    { labels() }
                     <a href="/#">
                       { subject }
                     </a>

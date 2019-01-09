@@ -72,11 +72,66 @@ class App extends Component {
     })
   }
 
+  markAsUnread = () => {
+    // console.log("id", id)
+    const updatedMessage = this.state.messages.map(message => { 
+      if(message.selected && message.read) {
+        message.read = false
+      }
+      return message
+    })
+
+    this.setState({
+      messages: updatedMessage
+    })
+  }
+
+  markAsRead = () => {
+    const updatedMessage = this.state.messages.map(message => {
+      if(message.selected && !message.read) {
+        message.read = true
+      }
+      return message
+    })
+
+    this.setState({
+      messages: updatedMessage
+    })
+  }
+
+  selectAll = () => {
+    const select = this.state.messages.filter(message => message.selected === true)
+    const updatedMessage = this.state.messages.map(message => {
+      select.length !== this.state.messages.length ? message.selected = true : message.selected = false
+      return message
+    })
+
+    this.setState({
+      messages: updatedMessage
+    })
+  }
+
+  addLabel = (event) => {
+    const select = this.state.messages.filter(message => message.selected === true)
+    const updatedMessage = this.state.messages.map(message => {
+      select.length !== 0 ? console.log("true") : console.log("false")
+    })
+  }
+
+  removeLabel = () => {
+    console.log("removeLabel works")
+  }
+
   render() {
     return (
       <div className="container">
         <Toolbar 
-          state={ this.state.messages }/>
+          state={ this.state.messages }
+          markAsUnread={ this.markAsUnread }
+          markAsRead={ this.markAsRead }
+          selectAll={ this.selectAll }
+          addLabel={ this.addLabel }
+          removeLabel={ this.removeLabel }/>
         <MessageList 
           state={ this.state.messages } 
           messageRead={ this.messageRead }
