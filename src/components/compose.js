@@ -24,7 +24,7 @@ class ComposeForm extends Component {
                   </div>
                   <div className="form-group">
                     <div className="col-sm-8 col-sm-offset-2">
-                      <input type="submit" value="Send" className="btn btn-primary"></input>
+                      <input type="submit" value="Send" className="btn btn-primary" onClick={() => this.props.composeMessage()}></input>
                     </div>
                   </div>
                 </form>

@@ -43,10 +43,7 @@ class App extends Component {
   }
 
   unreadCount = () => {
-    const unreadMessages = this.state.messages.filter(message => message.read === false)
-    const count = unreadMessages.length
-    console.log(count)
-    return count
+    return this.state.messages.filter(message => message.read === false).length
   }
 
   messageRead = (id) => {
@@ -159,6 +156,10 @@ class App extends Component {
     })
   }
 
+  composeMessage = () => {
+    console.log("composeMessage works")
+  }
+
   render() {
     return (
       <div className="container">
@@ -172,7 +173,7 @@ class App extends Component {
           deleteMessage={ this.deleteMessage }
           showCompose={ this.showCompose }
           unreadCount={ this.unreadCount }/>
-        {this.state.active === true ? <ComposeForm /> : null}
+        {this.state.active === true ? <ComposeForm composeMessage={ this.composeMessage }/> : null}
         <MessageList 
           state={ this.state.messages } 
           messageRead={ this.messageRead }
