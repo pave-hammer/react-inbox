@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Message extends Component {
     
     render(){
-        console.log("child props -", this.props.sub.body)
+        // console.log("child props -", this.props.sub.body)
         const subject = this.props.sub.subject
         // const label = this.props.sub.labels
 
