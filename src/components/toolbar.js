@@ -22,9 +22,9 @@ class Toolbar extends Component {
     let icon = "fa fa-square-o"
     const select = this.props.state.filter(message => message.selected === true)
     const updatedMessage = this.props.state.map(message => {
-      if(select.length !== 0 && select.length !== this.props.state.length) {
+      if (select.length !== 0 && select.length !== this.props.state.length) {
         icon = "fa fa-minus-square-o"
-      } else if(select.length !== 0 && select.length === this.props.state.length) {
+      } else if (select.length !== 0 && select.length === this.props.state.length) {
         icon = "fa fa-check-square-o"
       } else {
         return icon
@@ -39,11 +39,11 @@ class Toolbar extends Component {
   addLabel = () => {
     return (
       <select className="form-control label-select" onClick={(event) => this.props.addLabel(event)}>
-       <option>Apply label</option>
-       <option value="dev">dev</option>
-       <option value="personal">personal</option>
-       <option value="gschool">gschool</option>
-     </select>
+        <option>Apply label</option>
+        <option value="dev">dev</option>
+        <option value="personal">personal</option>
+        <option value="gschool">gschool</option>
+      </select>
     )
   }
 
@@ -72,30 +72,34 @@ class Toolbar extends Component {
     )
   }
 
+  unreadCount = () => {
+    return this.props.state.filter(message => message.read === false).length
+  }
+
   render() {
     return (
       <div className="container">
         <div className="row toolbar">
-            <div className="col-md-12">
-                <p className="pull-right">
-                  <span className="badge badge">{this.props.unreadCount()}</span>
-                  unread messages
-                </p>
+          <div className="col-md-12">
+            <p className="pull-right">
+              <span className="badge badge">{this.unreadCount()}</span>
+              unread messages
+            </p>
 
-                {this.compose()}
+            {this.compose()}
 
-                {this.selectedAll()}
+            {this.selectedAll()}
 
-                {this.markAsReadToggle()}
+            {this.markAsReadToggle()}
 
-                {this.markAsUnreadToggle()}
+            {this.markAsUnreadToggle()}
 
-                {this.addLabel()}
+            {this.addLabel()}
 
-                {this.removeLabel()}
+            {this.removeLabel()}
 
-                {this.delete()}
-            </div>
+            {this.delete()}
+          </div>
         </div>
       </div>
     );

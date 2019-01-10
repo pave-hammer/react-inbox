@@ -26,29 +26,25 @@ class App extends Component {
 
   getData = async () => {
     return await fetch("http://localhost:8082/api/messages")
-    .then(response => response.json())
-    .then(res => {
-      res.map(messages => {
-        messages.read = false
-        messages.starred = false
-        messages.selected = false
-        messages.opened = false
-        return messages
+      .then(response => response.json())
+      .then(res => {
+        res.map(messages => {
+          messages.read = false
+          messages.starred = false
+          messages.selected = false
+          messages.opened = false
+          return messages
+        })
+        this.setState({
+          messages: res
+        })
       })
-      this.setState({
-        messages: res
-      })
-    })
-    .catch(error => console.error(error))
-  }
-
-  unreadCount = () => {
-    return this.state.messages.filter(message => message.read === false).length
+      .catch(error => console.error(error))
   }
 
   messageRead = (id) => {
-    const updatedMessage = this.state.messages.map(message => { 
-      if(message.id === id) {
+    const updatedMessage = this.state.messages.map(message => {
+      if (message.id === id) {
         message.read = true
         message.opened = !message.opened
       }
@@ -60,7 +56,7 @@ class App extends Component {
 
   selectedMessage = (id) => {
     const updatedMessage = this.state.messages.map(message => {
-      if(message.id === id) {
+      if (message.id === id) {
         message.selected = !message.selected
       }
       return message
@@ -71,7 +67,7 @@ class App extends Component {
 
   starredMessage = (id) => {
     const updatedMessage = this.state.messages.map(message => {
-      if(message.id === id) {
+      if (message.id === id) {
         message.starred = !message.starred
       }
       return message
@@ -81,8 +77,8 @@ class App extends Component {
   }
 
   markAsUnread = () => {
-    const updatedMessage = this.state.messages.map(message => { 
-      if(message.selected && message.read) {
+    const updatedMessage = this.state.messages.map(message => {
+      if (message.selected && message.read) {
         message.read = false
       }
       return message
@@ -93,7 +89,7 @@ class App extends Component {
 
   markAsRead = () => {
     const updatedMessage = this.state.messages.map(message => {
-      if(message.selected && !message.read) {
+      if (message.selected && !message.read) {
         message.read = true
       }
       return message
@@ -115,19 +111,19 @@ class App extends Component {
   addLabel = (event) => {
     const updatedMessage = this.state.messages.map(message => {
       const label = message.labels.includes(event.target.value)
-      if(message.selected === true && !label){
+      if (message.selected === true && !label) {
         message.labels = [...message.labels, event.target.value]
       }
       return message
     })
-    
+
     this.stateUpdate(updatedMessage)
   }
 
   removeLabel = (event) => {
     const updatedMessage = this.state.messages.map(message => {
       const label = message.labels.includes(event.target.value)
-      if(message.selected === true && label){
+      if (message.selected === true && label) {
         const index = message.labels.indexOf(event.target.value)
         message.labels.splice(index, 1)
       }
@@ -139,8 +135,8 @@ class App extends Component {
 
   deleteMessage = () => {
     const updatedMessage = this.state.messages.filter(message => {
-      if(message.selected === true){
-        delete(message.selected)
+      if (message.selected === true) {
+        delete (message.selected)
       } else if (message.selected !== true) {
         return message
       }
@@ -163,22 +159,22 @@ class App extends Component {
   render() {
     return (
       <div className="container">
-        <Toolbar 
-          state={ this.state.messages }
-          markAsUnread={ this.markAsUnread }
-          markAsRead={ this.markAsRead }
-          selectAll={ this.selectAll }
-          addLabel={ this.addLabel }
-          removeLabel={ this.removeLabel }
-          deleteMessage={ this.deleteMessage }
-          showCompose={ this.showCompose }
-          unreadCount={ this.unreadCount }/>
-        {this.state.active === true ? <ComposeForm composeMessage={ this.composeMessage }/> : null}
-        <MessageList 
-          state={ this.state.messages } 
-          messageRead={ this.messageRead }
-          selectedMessage={ this.selectedMessage }
-          starredMessage={ this.starredMessage }/>
+        <Toolbar
+          state={this.state.messages}
+          markAsUnread={this.markAsUnread}
+          markAsRead={this.markAsRead}
+          selectAll={this.selectAll}
+          addLabel={this.addLabel}
+          removeLabel={this.removeLabel}
+          deleteMessage={this.deleteMessage}
+          showCompose={this.showCompose}
+          unreadCount={this.unreadCount} />
+        {this.state.active === true ? <ComposeForm composeMessage={this.composeMessage} /> : null}
+        <MessageList
+          state={this.state.messages}
+          messageRead={this.messageRead}
+          selectedMessage={this.selectedMessage}
+          starredMessage={this.starredMessage} />
       </div>
     );
   }
