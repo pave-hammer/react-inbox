@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import Message from './messages.js'
 
 class MessageList extends Component {
-
   render() {
-    // console.log("Props", this.props.state)
-
     return (
       <div>
         {this.props.state.map((subject, idx) => {
@@ -15,11 +12,10 @@ class MessageList extends Component {
             messageRead={this.props.messageRead}
             selectedMessage={this.props.selectedMessage}
             starredMessage={this.props.starredMessage}
-            onClick={() => this.props.showBody()} />
+            onClick={this.props.showBody} />
         })}
       </div>
     )
   }
 }
-
 export default MessageList

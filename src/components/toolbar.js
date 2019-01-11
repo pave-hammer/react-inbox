@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 class Toolbar extends Component {
-
   markAsReadToggle = () => {
     const isDisabled = this.props.state.map(item => item.selected && !item.read ? true : false)
     const result = isDisabled.includes(true) ? false : true
@@ -36,57 +35,17 @@ class Toolbar extends Component {
     )
   }
 
-  addLabel = () => {
-    return (
-      <select className="form-control label-select" onClick={(event) => this.props.addLabel(event)}>
-        <option>Apply label</option>
-        <option value="dev">dev</option>
-        <option value="personal">personal</option>
-        <option value="gschool">gschool</option>
-      </select>
-    )
-  }
-
-  removeLabel = () => {
-    return (
-      <select className="form-control label-select" onClick={(event) => this.props.removeLabel(event)}>
-        <option>Remove label</option>
-        <option value="dev">dev</option>
-        <option value="personal">personal</option>
-        <option value="gschool">gschool</option>
-      </select>
-    )
-  }
-
-  delete = () => {
-    return (
-      <a href="/#" value="false" className="btn btn-default" onClick={() => this.props.deleteMessage()}>
-        <i className="fa fa-trash-o"></i>
-      </a>
-    )
-  }
-
-  compose = () => {
-    return (
-      <button className="btn btn-danger" onClick={() => this.props.showCompose()}><i className="fa fa-plus"></i></button>
-    )
-  }
-
-  unreadCount = () => {
-    return this.props.state.filter(message => message.read === false).length
-  }
-
   render() {
     return (
       <div className="container">
         <div className="row toolbar">
           <div className="col-md-12">
             <p className="pull-right">
-              <span className="badge badge">{this.unreadCount()}</span>
+              <span className="badge badge">{this.props.state.filter(message => message.read === false).length}</span>
               unread messages
             </p>
 
-            {this.compose()}
+            <button className="btn btn-danger" onClick={() => this.props.showCompose()}><i className="fa fa-plus"></i></button>
 
             {this.selectedAll()}
 
@@ -94,16 +53,27 @@ class Toolbar extends Component {
 
             {this.markAsUnreadToggle()}
 
-            {this.addLabel()}
+            <select className="form-control label-select" onClick={(event) => this.props.addLabel(event)}>
+              <option>Apply label</option>
+              <option value="dev">dev</option>
+              <option value="personal">personal</option>
+              <option value="gschool">gschool</option>
+            </select>
 
-            {this.removeLabel()}
+            <select className="form-control label-select" onClick={(event) => this.props.removeLabel(event)}>
+              <option>Remove label</option>
+              <option value="dev">dev</option>
+              <option value="personal">personal</option>
+              <option value="gschool">gschool</option>
+            </select>
 
-            {this.delete()}
+            <a href="/#" value="false" className="btn btn-default" onClick={() => this.props.deleteMessage()}>
+              <i className="fa fa-trash-o"></i>
+            </a>
           </div>
         </div>
       </div>
     );
   }
 }
-
 export default Toolbar;

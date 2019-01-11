@@ -5,19 +5,12 @@ import MessageList from './components/messages-list.js';
 import ComposeForm from './components/compose.js';
 
 class App extends Component {
-
   constructor() {
     super()
     this.state = {
       messages: [],
       active: false
     }
-  }
-
-  stateUpdate = (message) => {
-    this.setState({
-      messages: message
-    })
   }
 
   componentDidMount() {
@@ -42,6 +35,15 @@ class App extends Component {
       .catch(error => console.error(error))
   }
 
+  stateUpdate = (message, command, prop) => {
+    this.setState({
+      messages: message
+    })
+    const result = command && prop ? this.updates(command, prop) : null
+    return result
+    // this.updates(command, prop)
+  }
+
   messageRead = (id) => {
     const updatedMessage = this.state.messages.map(message => {
       if (message.id === id) {
@@ -51,7 +53,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage)
+    this.stateUpdate(updatedMessage, "read", "read")
   }
 
   selectedMessage = (id) => {
@@ -73,7 +75,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage)
+    this.stateUpdate(updatedMessage, "star", "starred")
   }
 
   markAsUnread = () => {
@@ -95,7 +97,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage)
+    this.stateUpdate(updatedMessage, "read", "read", false)
   }
 
   selectAll = () => {
@@ -117,7 +119,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage)
+    this.stateUpdate(updatedMessage, "addLabel", "Label")
   }
 
   removeLabel = (event) => {
@@ -130,20 +132,13 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage)
+    this.stateUpdate(updatedMessage, "labels", "labels")
   }
 
   deleteMessage = () => {
-    const updatedMessage = this.state.messages.filter(message => {
-      if (message.selected === true) {
-        delete (message.selected)
-      } else if (message.selected !== true) {
-        return message
-      }
-    })
-
-    this.stateUpdate(updatedMessage)
-    return updatedMessage
+    const updatedMessage = this.state.messages.filter(message => message.selected)
+    this.stateUpdate(updatedMessage, "delete", "delete")
+    // this.updates("delete", "delete")
   }
 
   showCompose = () => {
@@ -152,8 +147,50 @@ class App extends Component {
     })
   }
 
-  composeMessage = () => {
-    console.log("composeMessage works")
+  composeMessage = (event) => {
+    this.setState({
+      [event.target.id]: event.target.value
+    })
+  }
+
+  sendMessage = (event) => {
+    event.preventDefault()
+    return fetch("http://localhost:8082/api/messages", {
+      method: "POST",
+      body: JSON.stringify({
+        subject: this.state.subject,
+        body: this.state.body
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "aaplication/json"
+      }
+    })
+      .then(res => res.json())
+      .then(response => {
+        this.setState({
+          messages: [...this.state.messages, response]
+        })
+      })
+      .catch(error => console.error(error))
+  }
+
+  updates = async (command, prop, value) => {
+    const updatedMessage = this.state.messages.filter(message => message.selected)
+    const ids = updatedMessage.map(message => message.id)
+    let message = {
+      messageIds: ids,
+      command: command,
+      [prop]: value
+    }
+    await fetch("http://localhost:8082/api/messages", {
+      method: "PATCH",
+      body: JSON.stringify(message),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      }
+    })
   }
 
   render() {
@@ -169,7 +206,7 @@ class App extends Component {
           deleteMessage={this.deleteMessage}
           showCompose={this.showCompose}
           unreadCount={this.unreadCount} />
-        {this.state.active === true ? <ComposeForm composeMessage={this.composeMessage} /> : null}
+        {this.state.active === true ? <ComposeForm sendMessage={this.sendMessage} composeMessage={this.composeMessage} /> : null}
         <MessageList
           state={this.state.messages}
           messageRead={this.messageRead}
@@ -179,5 +216,4 @@ class App extends Component {
     );
   }
 }
-
 export default App;
