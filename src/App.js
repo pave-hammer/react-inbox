@@ -22,10 +22,10 @@ class App extends Component {
       .then(response => response.json())
       .then(res => {
         res.map(messages => {
-          messages.read = false
-          messages.starred = false
-          messages.selected = false
-          messages.opened = false
+          messages.read = messages.read || false
+          messages.starred = messages.starred || false
+          messages.selected = messages.selected || false
+          messages.opened = messages.opened || false
           return messages
         })
         this.setState({
@@ -35,13 +35,10 @@ class App extends Component {
       .catch(error => console.error(error))
   }
 
-  stateUpdate = (message, command, prop) => {
+  stateUpdate = (message) => {
     this.setState({
       messages: message
     })
-    const result = command && prop ? this.updates(command, prop) : null
-    return result
-    // this.updates(command, prop)
   }
 
   messageRead = (id) => {
@@ -53,7 +50,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage, "read", "read")
+    this.stateUpdate(updatedMessage)
   }
 
   selectedMessage = (id) => {
@@ -75,7 +72,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage, "star", "starred")
+    this.stateUpdate(updatedMessage)
   }
 
   markAsUnread = () => {
@@ -97,7 +94,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage, "read", "read", false)
+    this.stateUpdate(updatedMessage)
   }
 
   selectAll = () => {
@@ -119,7 +116,7 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage, "addLabel", "Label")
+    this.stateUpdate(updatedMessage)
   }
 
   removeLabel = (event) => {
@@ -132,13 +129,15 @@ class App extends Component {
       return message
     })
 
-    this.stateUpdate(updatedMessage, "labels", "labels")
+    this.stateUpdate(updatedMessage)
   }
 
   deleteMessage = () => {
     const updatedMessage = this.state.messages.filter(message => message.selected)
-    this.stateUpdate(updatedMessage, "delete", "delete")
-    // this.updates("delete", "delete")
+    const ids = updatedMessage.map(message => message.id)
+    const test = this.state.messages.filter(message => !message.selected)
+    this.stateUpdate(test)
+    this.updates(ids, "delete", "delete")
   }
 
   showCompose = () => {
@@ -163,7 +162,7 @@ class App extends Component {
       }),
       headers: {
         "Content-Type": "application/json",
-        "Accept": "aaplication/json"
+        "Accept": "application/json"
       }
     })
       .then(res => res.json())
@@ -175,9 +174,7 @@ class App extends Component {
       .catch(error => console.error(error))
   }
 
-  updates = async (command, prop, value) => {
-    const updatedMessage = this.state.messages.filter(message => message.selected)
-    const ids = updatedMessage.map(message => message.id)
+  updates = async (ids, command, prop, value) => {
     let message = {
       messageIds: ids,
       command: command,
